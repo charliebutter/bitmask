@@ -54,32 +54,206 @@
     <div id="instructionsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>how to play</h2>
+            <div class="modal-header">
+                <h2>how to play</h2>
+                <label class="modal-toggle-label">
+                    <input type="checkbox" id="toggleNumbers" checked>
+                    <span>show cell numbers</span>
+                </label>
+            </div>
             <div class="instructions">
-                <p>fill the main 4x4 grid with 0s and 1s to satisfy all five masks.</p>
+                <p><b>[bitmask]</b> is a logic puzzle where you must find the unique grid of 0s and 1s that satisfies all given masks. each mask requires a specific number of overlapping 1s between your grid and its pattern. think of it as a binary sudoku where numerical constraints interact to reveal a single solution.</p>
 
-                <h3>the basics</h3>
-                <ul>
-                    <li>click cells in the main grid to toggle between 0 and 1</li>
-                    <li>each mask below shows a pattern of blue highlighted cells</li>
-                    <li>the numbers show your progress: [current count / target count]</li>
-                </ul>
+                <h3>cell states</h3>
+                <div class="demo-cells-grid">
+                    <h4 class="demo-section-header">your grid</h4>
 
-                <h3>satisfying a mask</h3>
-                <ul>
-                    <li>look at the blue highlighted cells in the mask</li>
-                    <li>count how many of those positions also have a 1 in your main grid</li>
-                    <li>make that count equal the target number</li>
-                </ul>
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="grid demo-grid">
+                                <div class="cell">0</div>
+                            </div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>inactive</strong>
+                            <span>default state (0)</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="grid demo-grid">
+                                <div class="cell active">1</div>
+                            </div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>active</strong>
+                            <span>toggled state (1)</span>
+                        </div>
+                    </div>
+
+                    <h4 class="demo-section-header">mask grids</h4>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="grid demo-grid clue-demo">
+                                <div class="cell">0</div>
+                            </div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>empty</strong>
+                            <span>inactive cells that are not part of the mask pattern</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="grid demo-grid clue-demo">
+                                <div class="cell clue-highlight">1</div>
+                            </div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>mask pattern</strong>
+                            <span>inactive cells that will count toward the mask objective when active</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="grid demo-grid clue-demo">
+                                <div class="cell user-active">0</div>
+                            </div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>active (non-overlapping)</strong>
+                            <span>cells that are active but are not part of the mask pattern. these do not count toward or against the mask objective</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="grid demo-grid clue-demo">
+                                <div class="cell clue-highlight user-active">1</div>
+                            </div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>active (overlapping)</strong>
+                            <span>cells that are active and are part of the mask pattern. these count toward the mask objective</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>mask objective</h3>
+                <p>each mask has a target count that you must match. the count represents how many cells should be active (1) in both your grid AND the mask pattern</p>
+
+                <div class="demo-cells-grid">
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="clue-count clue-count-too-low">3 / 5</div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>too low (blue)</strong>
+                            <span>you need more overlapping 1s to reach the target</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="clue-count clue-count-satisfied">5 / 5</div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>satisfied (green)</strong>
+                            <span>you have exactly the right number of overlapping 1s</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-cell-row">
+                        <div class="demo-cell-container">
+                            <div class="clue-count clue-count-too-high">7 / 5</div>
+                        </div>
+                        <div class="demo-cell-label">
+                            <strong>too high (orange)</strong>
+                            <span>you have too many overlapping 1s and need to deactivate some</span>
+                        </div>
+                    </div>
+                </div>
+
+                
 
                 <h3>example</h3>
-                <p>if a mask shows "2/3" above it:</p>
-                <ul>
-                    <li>the target is 3, and you currently have 2 matches</li>
-                    <li>you need 1 more cell where both the mask is blue AND your grid has a 1</li>
-                </ul>
-                <br>
-                <p>solve the puzzle by making all five masks show matching numbers!</p>
+                <div class="example-grids">
+                    <div class="example-grid-section">
+                        <h4 class="example-grid-title">your grid</h4>
+                        <div class="grid example-main-grid">
+                            <div class="cell active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                        </div>
+                    </div>
+
+                    <div class="example-grid-section">
+                        <h4 class="example-grid-title">mask A</h4>
+                        
+                        <div class="grid example-clue-grid">
+                            <div class="cell clue-highlight user-active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell clue-highlight user-active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell user-active">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell clue-highlight user-active">1</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell user-active">0</div>
+                            <div class="cell">0</div>
+                            <div class="cell clue-highlight">1</div>
+                        </div>
+                        <div class="example-clue-header">
+                            <span class="clue-count clue-count-too-low">3 / 4</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-explanation">
+                    <p><strong>in this example:</strong></p>
+                    <ul>
+                        <li>there are three cells that are both active in your grid AND part of the mask pattern (the green ones)</li>
+                        <li>the objective is 4, so you need one more overlapping 1</li>
+                        <li>the bottom-right cell of your grid can be activated to satisfy the mask</li>
+                    </ul>
+                </div>
+
+                <h3>summary</h3>
+                <div class="summary-section">
+                    <p>to complete the puzzle:</p>
+                    <ul>
+                        <li>toggle cells in your grid to create a pattern of 0s and 1s</li>
+                        <li>watch the labels on each mask to see the effect of your changes</li>
+                        <li><strong>all five masks must be satisfied simultaneously</strong> to solve the puzzle</li>
+                        <li>when all masks are green, click "submit" to check your solution</li>
+                    </ul>
+                    <p class="encouragement">every puzzle has exactly one unique solution.<br>take your time, experiment with different patterns, and have fun!</p>
+                </div>
+
+                <div class="modal-footer">
+                    <p>created by <strong>Charlie Beutter</strong></p>
+                </div>
             </div>
         </div>
     </div>
@@ -90,14 +264,6 @@
             <span class="beta-banner-text">this app is currently in beta. some features may be under development.</span>
             <button id="dismissBanner" class="beta-banner-dismiss">[dismiss]</button>
         </div>
-    </div>
-
-    <!-- Number Toggle -->
-    <div class="number-toggle-container">
-        <label class="toggle-label">
-            <input type="checkbox" id="toggleNumbers" checked>
-            <span>cell numbers</span>
-        </label>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
