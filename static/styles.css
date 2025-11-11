@@ -139,7 +139,8 @@ h1 {
 }
 
 /* Hide numbers when checkbox is unchecked */
-body.hide-numbers .cell {
+body.hide-numbers .cell,
+body.hide-numbers .main-grid .cell.correct {
     color: transparent !important;
 }
 
