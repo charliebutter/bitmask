@@ -21,6 +21,7 @@ function initializeEventListeners() {
     document.getElementById('giveUpBtn').addEventListener('click', giveUp);
     document.getElementById('instructionsBtn').addEventListener('click', showInstructions);
     document.getElementById('sharePuzzleBtn').addEventListener('click', copyPuzzleLink);
+    document.getElementById('toggleNumbers').addEventListener('change', toggleNumbers);
 
     // Modal close button
     const modal = document.getElementById('instructionsModal');
@@ -38,6 +39,9 @@ function initializeEventListeners() {
 
     // Beta banner dismiss
     initializeBetaBanner();
+
+    // Initialize number visibility from localStorage
+    initializeNumberVisibility();
 }
 
 function initializeBetaBanner() {
@@ -60,6 +64,32 @@ function initializeBetaBanner() {
             banner.style.display = 'none';
         }, 300);
     });
+}
+
+function initializeNumberVisibility() {
+    const showNumbers = localStorage.getItem('showNumbers');
+    const toggleCheckbox = document.getElementById('toggleNumbers');
+
+    // Default to showing numbers if not set
+    if (showNumbers === 'false') {
+        document.body.classList.add('hide-numbers');
+        toggleCheckbox.checked = false;
+    } else {
+        document.body.classList.remove('hide-numbers');
+        toggleCheckbox.checked = true;
+    }
+}
+
+function toggleNumbers(event) {
+    const showNumbers = event.target.checked;
+
+    if (showNumbers) {
+        document.body.classList.remove('hide-numbers');
+        localStorage.setItem('showNumbers', 'true');
+    } else {
+        document.body.classList.add('hide-numbers');
+        localStorage.setItem('showNumbers', 'false');
+    }
 }
 
 function showInstructions() {
