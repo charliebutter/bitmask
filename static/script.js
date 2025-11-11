@@ -92,6 +92,53 @@ function toggleNumbers(event) {
     }
 }
 
+function savePuzzleState() {
+    // Save the entire puzzle state to local storage
+    const puzzleState = {
+        clues: currentPuzzle.clues,
+        counts: currentPuzzle.counts,
+        gridSize: currentPuzzle.gridSize,
+        userGrid: currentPuzzle.userGrid,
+        solutionHash: currentPuzzle.solutionHash,
+        isCorrect: currentPuzzle.isCorrect,
+        puzzleData: currentPuzzle.puzzleData
+    };
+
+    localStorage.setItem('currentPuzzle', JSON.stringify(puzzleState));
+}
+
+function loadPuzzleState() {
+    // Load puzzle state from local storage
+    const savedState = localStorage.getItem('currentPuzzle');
+
+    if (savedState) {
+        try {
+            const puzzleState = JSON.parse(savedState);
+
+            // Restore the puzzle state
+            currentPuzzle.clues = puzzleState.clues;
+            currentPuzzle.counts = puzzleState.counts;
+            currentPuzzle.gridSize = puzzleState.gridSize;
+            currentPuzzle.userGrid = puzzleState.userGrid;
+            currentPuzzle.solutionHash = puzzleState.solutionHash;
+            currentPuzzle.isCorrect = puzzleState.isCorrect;
+            currentPuzzle.puzzleData = puzzleState.puzzleData;
+
+            return true;
+        } catch (error) {
+            console.error('error loading puzzle state from local storage:', error);
+            return false;
+        }
+    }
+
+    return false;
+}
+
+function clearPuzzleState() {
+    // Remove puzzle state from local storage
+    localStorage.removeItem('currentPuzzle');
+}
+
 function showInstructions() {
     document.getElementById('instructionsModal').style.display = 'block';
 }
@@ -102,15 +149,31 @@ function loadPuzzle() {
     const puzzleParam = urlParams.get('puzzle');
 
     if (puzzleParam) {
-        // Load the shared puzzle
+        // Load the shared puzzle (URL takes priority)
         generateNewPuzzle(puzzleParam);
     } else {
-        // Generate a new puzzle
-        generateNewPuzzle();
+        // Try to load from local storage first
+        const loaded = loadPuzzleState();
+
+        if (loaded) {
+            // Successfully loaded from local storage, render the grids
+            renderMainGrid();
+            renderClues();
+            showGrids();
+            console.log('puzzle loaded from local storage');
+        } else {
+            // No saved puzzle, generate a new one
+            generateNewPuzzle();
+        }
     }
 }
 
 async function generateNewPuzzle(puzzleParam = null, clearUrl = false) {
+    // Clear local storage if explicitly generating a new puzzle
+    if (clearUrl) {
+        clearPuzzleState();
+    }
+
     // Hide grids and show loading state
     hideGrids();
     showLoadingState(puzzleParam ? 'retrieving' : 'generating');
@@ -159,6 +222,9 @@ async function generateNewPuzzle(puzzleParam = null, clearUrl = false) {
 
             hideLoadingState();
             showGrids();
+
+            // Save puzzle state to local storage
+            savePuzzleState();
 
             // Update URL based on context
             if (puzzleParam) {
@@ -252,6 +318,9 @@ function toggleCell(row, col) {
     // Re-render both main grid and clues
     renderMainGrid();
     renderClues();
+
+    // Save the updated state to local storage
+    savePuzzleState();
 }
 
 function calculateClueCount(clue) {
@@ -358,6 +427,7 @@ async function checkSolution() {
         if (userGridHash === currentPuzzle.solutionHash) {
             currentPuzzle.isCorrect = true;
             renderMainGrid();
+            savePuzzleState();
             showMessage('correct! well done!', 'success');
         } else {
             showMessage('not quite right. keep trying!', 'error');
@@ -398,6 +468,9 @@ async function giveUp() {
             // Re-render the grids
             renderMainGrid();
             renderClues();
+
+            // Save the updated state
+            savePuzzleState();
 
             // Show message
             showMessage('solution revealed!', 'success');

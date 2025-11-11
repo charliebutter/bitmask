@@ -94,9 +94,7 @@ class PuzzleGenerator:
         Check if there's exactly one solution using Z3 SAT solver.
         Returns (is_unique, num_solutions)
         
-        This is MUCH faster than brute force, especially for larger grids:
-        - 4x4: ~10-100x faster
-        - 5x5 and beyond: Makes the difference between feasible and infeasible
+        This is MUCH faster than brute force, especially for larger grids
         """
         # Create boolean variables for each cell
         grid_vars = [[Bool(f"cell_{i}_{j}") for j in range(self.grid_size)] 
