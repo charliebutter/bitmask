@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeEventListeners() {
     document.getElementById('newPuzzleBtn').addEventListener('click', () => generateNewPuzzle(null, true));
     document.getElementById('checkBtn').addEventListener('click', checkSolution);
+    document.getElementById('clearBtn').addEventListener('click', clearGrid);
     document.getElementById('giveUpBtn').addEventListener('click', giveUp);
     document.getElementById('instructionsBtn').addEventListener('click', showInstructions);
     document.getElementById('sharePuzzleBtn').addEventListener('click', copyPuzzleLink);
@@ -296,14 +297,17 @@ function renderMainGrid() {
         shareButtonContainer.style.display = 'none';
     }
 
-    // Hide check and give up buttons when puzzle is solved
+    // Hide check, clear, and give up buttons when puzzle is solved
     const checkBtn = document.getElementById('checkBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const giveUpBtn = document.getElementById('giveUpBtn');
     if (currentPuzzle.isCorrect) {
         checkBtn.style.display = 'none';
+        clearBtn.style.display = 'none';
         giveUpBtn.style.display = 'none';
     } else {
         checkBtn.style.display = '';
+        clearBtn.style.display = '';
         giveUpBtn.style.display = '';
     }
 }
@@ -321,6 +325,29 @@ function toggleCell(row, col) {
 
     // Save the updated state to local storage
     savePuzzleState();
+}
+
+function clearGrid() {
+    if (!currentPuzzle.clues || currentPuzzle.clues.length === 0) {
+        showMessage('no puzzle loaded', 'error');
+        return;
+    }
+
+    // Reset all cells to 0
+    currentPuzzle.userGrid = Array(currentPuzzle.gridSize)
+        .fill(0)
+        .map(() => Array(currentPuzzle.gridSize).fill(0));
+
+    // Reset the correct state
+    currentPuzzle.isCorrect = false;
+
+    // Re-render both main grid and clues
+    renderMainGrid();
+    renderClues();
+
+    // Save the updated state to local storage
+    savePuzzleState();
+
 }
 
 function calculateClueCount(clue) {
@@ -665,6 +692,7 @@ function showLoadingState(mode = 'generating') {
 
     // Hide control buttons (but not the instructions button)
     document.getElementById('checkBtn').style.display = 'none';
+    document.getElementById('clearBtn').style.display = 'none';
     document.getElementById('giveUpBtn').style.display = 'none';
     document.getElementById('newPuzzleBtn').style.display = 'none';
 }
@@ -682,6 +710,7 @@ function hideLoadingState() {
 
     // Show control buttons again
     document.getElementById('checkBtn').style.display = '';
+    document.getElementById('clearBtn').style.display = '';
     document.getElementById('giveUpBtn').style.display = '';
     document.getElementById('newPuzzleBtn').style.display = '';
 }
