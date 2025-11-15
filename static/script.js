@@ -392,6 +392,9 @@ function renderClues() {
                 // Show the clue's value (not the user's value)
                 cell.textContent = clue[i][j];
 
+                // Add click handler to toggle the corresponding main grid cell
+                cell.addEventListener('click', () => toggleCell(i, j));
+
                 clueGrid.appendChild(cell);
             }
         }

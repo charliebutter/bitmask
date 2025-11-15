@@ -389,6 +389,7 @@ body.hide-numbers .main-grid .cell.correct {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    cursor: pointer;
 }
 
 /* Clue pattern cell (blue) - where the clue has a 1 */
