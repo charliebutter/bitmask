@@ -21,20 +21,34 @@ function initializeEventListeners() {
     document.getElementById('clearBtn').addEventListener('click', clearGrid);
     document.getElementById('giveUpBtn').addEventListener('click', giveUp);
     document.getElementById('instructionsBtn').addEventListener('click', showInstructions);
-    document.getElementById('sharePuzzleBtn').addEventListener('click', copyPuzzleLink);
+    document.getElementById('sharePuzzleBtn').addEventListener('click', showShareModal);
     document.getElementById('toggleNumbers').addEventListener('change', toggleNumbers);
 
-    // Modal close button
-    const modal = document.getElementById('instructionsModal');
-    const closeBtn = document.querySelector('.close');
+    // Instructions modal close button
+    const instructionsModal = document.getElementById('instructionsModal');
+    const instructionsCloseBtn = instructionsModal.querySelector('.close');
 
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
+    instructionsCloseBtn.addEventListener('click', () => {
+        instructionsModal.style.display = 'none';
     });
 
+    // Share modal close button
+    const shareModal = document.getElementById('shareModal');
+    const shareCloseBtn = document.getElementById('closeShareModal');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+
+    shareCloseBtn.addEventListener('click', () => {
+        shareModal.style.display = 'none';
+    });
+
+    copyLinkBtn.addEventListener('click', copyPuzzleLink);
+
     window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+        if (event.target === instructionsModal) {
+            instructionsModal.style.display = 'none';
+        }
+        if (event.target === shareModal) {
+            shareModal.style.display = 'none';
         }
     });
 
@@ -715,17 +729,35 @@ function hideLoadingState() {
     document.getElementById('newPuzzleBtn').style.display = '';
 }
 
-async function copyPuzzleLink() {
+function showShareModal() {
     if (!currentPuzzle.puzzleData) {
         showMessage('no puzzle data available to share.', 'error');
         return;
     }
 
-    try {
-        // Build the full URL with puzzle parameter
-        const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-        const shareUrl = `${baseUrl}?puzzle=${encodeURIComponent(currentPuzzle.puzzleData)}`;
+    // Build the full URL with puzzle parameter
+    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+    const shareUrl = `${baseUrl}?puzzle=${encodeURIComponent(currentPuzzle.puzzleData)}`;
 
+    // Set the share link in the input field
+    const shareLinkInput = document.getElementById('shareLinkInput');
+    shareLinkInput.value = shareUrl;
+
+    // Show the modal
+    const shareModal = document.getElementById('shareModal');
+    shareModal.style.display = 'block';
+}
+
+async function copyPuzzleLink() {
+    const shareLinkInput = document.getElementById('shareLinkInput');
+    const shareUrl = shareLinkInput.value;
+
+    if (!shareUrl) {
+        showMessage('no puzzle link available.', 'error');
+        return;
+    }
+
+    try {
         // Copy to clipboard
         await navigator.clipboard.writeText(shareUrl);
 

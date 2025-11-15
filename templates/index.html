@@ -41,7 +41,7 @@
             <div class="grid-with-share">
                 <div id="mainGrid" class="grid main-grid"></div>
                 <div id="shareButtonContainer" class="share-button-container" style="display: none;">
-                    <button id="sharePuzzleBtn" class="btn btn-share">copy puzzle link</button>
+                    <button id="sharePuzzleBtn" class="btn btn-share">share puzzle</button>
                 </div>
             </div>
         </div>
@@ -254,6 +254,23 @@
 
                 <div class="modal-footer">
                     <p>created by <strong>Charlie Beutter</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeShareModal">&times;</span>
+            <div class="modal-header">
+                <h2>share puzzle</h2>
+            </div>
+            <div class="share-modal-content">
+                <p>share this puzzle with your friends! copy the link below:</p>
+                <div class="share-link-container">
+                    <input type="text" id="shareLinkInput" class="share-link-input" readonly>
+                    <button id="copyLinkBtn" class="btn btn-info">copy link</button>
                 </div>
             </div>
         </div>

@@ -783,6 +783,44 @@ body.hide-numbers .main-grid .cell.correct {
     font-weight: 600;
 }
 
+/* Share modal styles */
+.share-modal-content {
+    margin-top: 20px;
+}
+
+.share-modal-content p {
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.share-link-container {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.share-link-input {
+    flex: 1;
+    padding: 12px 16px;
+    background: #1a1a1a;
+    border: 2px solid #2d2d2d;
+    border-radius: 8px;
+    color: #4a9eff;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
+    transition: border-color 0.3s ease;
+}
+
+.share-link-input:focus {
+    outline: none;
+    border-color: #4a9eff;
+}
+
+.share-link-container .btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .close {
     color: #888;
     position: sticky;
@@ -902,6 +940,14 @@ body.hide-numbers .main-grid .cell.correct {
     .example-explanation {
         padding: 12px;
         font-size: 0.9em;
+    }
+
+    .share-link-container {
+        flex-direction: column;
+    }
+
+    .share-link-input {
+        font-size: 0.8em;
     }
 }
 
